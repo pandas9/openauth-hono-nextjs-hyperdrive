@@ -1,0 +1,5 @@
+packages:
+  - "auth"
+  - "packages/openauth"
+  - "client"
+  - "server"

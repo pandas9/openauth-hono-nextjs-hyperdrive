@@ -1,0 +1,1 @@
+{"version":3,"file":"microsoft.d.ts","sourceRoot":"","sources":["../../../src/adapter/microsoft.ts"],"names":[],"mappings":"AAAA,OAAO,EAAiB,mBAAmB,EAAE,MAAM,aAAa,CAAA;AAChE,OAAO,EAAe,iBAAiB,EAAE,MAAM,WAAW,CAAA;AAE1D,MAAM,WAAW,eAAgB,SAAQ,mBAAmB;IAC1D,MAAM,EAAE,MAAM,CAAA;CACf;AAED,wBAAgB,gBAAgB,CAAC,MAAM,EAAE,eAAe;;;;;;EASvD;AAED,wBAAgB,oBAAoB,CAAC,MAAM,EAAE,iBAAiB;;;;;;EAM7D"}
