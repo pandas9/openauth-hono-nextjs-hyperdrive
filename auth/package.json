@@ -3,7 +3,7 @@
 	"version": "0.0.0",
 	"private": true,
 	"scripts": {
-		"deploy": "wrangler deploy",
+		"deploy": "npx wrangler deploy",
 		"dev": "wrangler dev --port 3002",
 		"start": "wrangler dev",
 		"test": "vitest",

@@ -3,7 +3,7 @@ import { cookies as getCookies } from "next/headers";
 
 export const client = createClient({
   clientID: "client",
-  issuer: "http://localhost:3002",
+  issuer: process.env.AUTH_URL,
 });
 
 export async function setTokens(access: string, refresh: string) {
