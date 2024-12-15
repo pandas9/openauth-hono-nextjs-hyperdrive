@@ -8,10 +8,6 @@ if (process.env.NODE_ENV === "development") {
 }
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  env: {
-    AUTH_URL: process.env.AUTH_URL,
-  },
-};
+const nextConfig = {};
 
 export default nextConfig;
