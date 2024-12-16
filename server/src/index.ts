@@ -45,7 +45,7 @@ app.use(
       windowMs: ms("1 minute"),
       max: 10,
       routePrefix: `${API_V1_PUBLIC_PREFIX}/file`,
-      routePrefixBasedLimit: true,
+      routePrefixBasedLimit: true, // rate limit on the route prefix ${API_V1_PUBLIC_PREFIX}/file instead of each individual file
     },
     {
       windowMs: ms("1 minute"),
