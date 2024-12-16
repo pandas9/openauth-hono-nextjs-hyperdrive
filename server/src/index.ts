@@ -1,18 +1,20 @@
 import { Hono } from "hono";
 import { openAuth } from "./middleware";
-import { Bindings, Variables } from "./validator";
 import { cors } from "hono/cors";
 import { env } from "hono/adapter";
-import { API_PUBLIC_PREFIX, API_V1_PREFIX } from "./helper";
-import user from "./v1/user";
+import { API_V1_PUBLIC_PREFIX, API_V1_PREFIX } from "./helper";
+import userRoutes from "./v1/user";
+import publicRoutes from "./v1/public";
 import { logger } from "hono/logger";
+import { Env } from "./validator";
+import { contextStorage } from "hono/context-storage";
+import { customLogger } from "./utils";
 
-const app = new Hono<{
-  Variables: Variables;
-  Bindings: Bindings;
-}>();
+const app = new Hono<Env>();
 
-app.use(logger());
+app.use(logger(customLogger));
+
+app.use(contextStorage());
 
 app.use("*", async (c, next) => {
   const { AUTH_URL } = env(c);
@@ -25,13 +27,11 @@ app.use("*", async (c, next) => {
   return corsMiddlewareHandler(c, next);
 });
 
-app.use("/api/*", openAuth);
+app.use(`${API_V1_PREFIX}/*`, openAuth);
 
-app.route(`${API_V1_PREFIX}/user`, user);
-
-app.get(`${API_PUBLIC_PREFIX}/hello`, (c) => {
-  return c.json({ message: "world!" });
-});
+export const routes = app
+  .route(`${API_V1_PREFIX}/user`, userRoutes)
+  .route(API_V1_PUBLIC_PREFIX, publicRoutes);
 
 app.notFound((c) => {
   return c.json({ message: "Not Found" }, 404);

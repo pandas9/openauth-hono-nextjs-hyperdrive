@@ -37,7 +37,7 @@ export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext) {
 		return authorizer({
 			storage: CloudflareStorage({
-				namespace: env.OPENAUTH_KV,
+				namespace: env.KV,
 			}),
 			subjects,
 			providers: {
@@ -45,7 +45,7 @@ export default {
 					PasswordUI({
 						sendCode: async (email, code) => {
 							console.log(email, code);
-							await env.OPENAUTH_KV.put(email, code);
+							await env.KV.put(email, code);
 						},
 					})
 				),

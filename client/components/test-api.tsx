@@ -1,8 +1,7 @@
 "use client";
 
 import styles from "../app/page.module.css";
-import { API_PUBLIC_PREFIX, API_V1_PREFIX } from "server/helper";
-import { userApi } from "@/lib/api";
+import { serverApi } from "@/lib/api";
 
 export default function TestApi() {
   return (
@@ -10,11 +9,13 @@ export default function TestApi() {
       <button
         className={styles.primary}
         onClick={async () => {
-          const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}${API_PUBLIC_PREFIX}/hello`
-          );
-          const data = await res.json();
+          const response = await serverApi.public.v1.hello.$get();
+          const data = await response.json();
           console.log(data);
+
+          const response2 = await serverApi.public.v1.world.$get();
+          const data2 = await response2.json();
+          console.log(data2);
         }}
       >
         Fetch Public API
@@ -22,7 +23,7 @@ export default function TestApi() {
       <button
         className={styles.primary}
         onClick={async () => {
-          const response = await userApi.index.$get();
+          const response = await serverApi.v1.user.$get();
           const data = await response.json();
           console.log(data);
         }}
@@ -32,7 +33,7 @@ export default function TestApi() {
       <button
         className={styles.primary}
         onClick={async () => {
-          const response = await userApi.index.$post({
+          const response = await serverApi.v1.user.$post({
             json: {
               name: "",
             },
@@ -46,7 +47,7 @@ export default function TestApi() {
       <button
         className={styles.primary}
         onClick={async () => {
-          const response = await userApi.index.$post({
+          const response = await serverApi.v1.user.$post({
             json: {
               name: "John",
               age: 20,
@@ -57,6 +58,34 @@ export default function TestApi() {
         }}
       >
         Fetch Private API with Valid JSON
+      </button>
+      <button
+        className={styles.primary}
+        onClick={async () => {
+          const response = await serverApi.v1.user["set-kv"].$get();
+          const data = await response.json();
+          console.log(data);
+        }}
+      >
+        Set KV
+      </button>
+      <button
+        className={styles.primary}
+        onClick={async () => {
+          const response = await serverApi.v1.user["get-kv"].$get();
+          const data = await response.json();
+          console.log(data);
+
+          const response2 = await serverApi.v1.user[":id"].$get({
+            param: {
+              id: "1",
+            },
+          });
+          const data2 = await response2.json();
+          console.log(data2);
+        }}
+      >
+        Get KV
       </button>
     </div>
   );

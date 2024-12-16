@@ -11,7 +11,7 @@ compatibility_flags = ["nodejs_compat"]
 enabled = true
 
 [[kv_namespaces]]
-binding = "OPENAUTH_KV"
+binding = "KV"
 id = "a482d5b1ec9a4e9e8b5446c7dec550d3"
 
 [[hyperdrive]]
