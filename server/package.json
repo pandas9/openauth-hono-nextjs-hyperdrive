@@ -10,14 +10,16 @@
   "dependencies": {
     "@hono/zod-validator": "^0.4.2",
     "@openauthjs/openauth": "workspace:*",
+    "drizzle-orm": "^0.38.2",
     "hono": "^4.6.14",
-    "zod": "^3.24.1",
-    "drizzle-orm": "^0.38.2"
+    "ms": "^2.1.3",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241112.0",
-    "wrangler": "^3.88.0",
-    "drizzle-kit": "^0.30.1"
+    "@types/ms": "^0.7.34",
+    "drizzle-kit": "^0.30.1",
+    "wrangler": "^3.88.0"
   },
   "exports": {
     "./validator": "./src/validator.ts",

@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { openAuth, rateLimiter } from "./middleware";
+import { createRateLimiter, openAuth, rateLimiter } from "./middleware";
 import { cors } from "hono/cors";
 import { env } from "hono/adapter";
 import { API_V1_PUBLIC_PREFIX, API_V1_PREFIX } from "./helper";
@@ -10,7 +10,7 @@ import { logger } from "hono/logger";
 import { Env } from "./validator";
 import { contextStorage } from "hono/context-storage";
 import { customLogger } from "./utils";
-import { every, some } from "hono/combine";
+import ms from "ms";
 
 const app = new Hono<Env>();
 
@@ -32,46 +32,32 @@ app.use("*", async (c, next) => {
 // protected routes
 app.use(`${API_V1_PREFIX}/*`, openAuth);
 
-// rate limit for all routes
-// if route prefix is not matched, then rate limiter will throw an error
-// that is handled by every function
+// rate limiter
 app.use(
   "*",
-  some(
-    // rate limit for private routes
-    every(
-      rateLimiter({
-        windowMs: 1 * 60 * 1000, // 1 minute
-        max: 10,
-        routePrefix: API_V1_PREFIX, // every route has a limit of 10 requests per minute but not request method
-      })
-    ),
-    // rate limit for file routes
-    every(
-      rateLimiter({
-        windowMs: 1 * 60 * 1000,
-        max: 10,
-        routePrefix: `${API_V1_PUBLIC_PREFIX}/file`,
-        routePrefixBasedLimit: true,
-      })
-    ),
-    // every other public route
-    every(
-      rateLimiter({
-        windowMs: 1 * 60 * 1000,
-        max: 2,
-        routePrefix: API_V1_PUBLIC_PREFIX,
-      })
-    ),
-    // every other route
-    every(
-      rateLimiter({
-        windowMs: 1 * 60 * 1000,
-        max: 100,
-        routePrefix: "/",
-      })
-    )
-  )
+  createRateLimiter([
+    {
+      windowMs: ms("1 minute"),
+      max: 10,
+      routePrefix: API_V1_PREFIX, // every route has a limit of 10 requests per minute but not request method
+    },
+    {
+      windowMs: ms("1 minute"),
+      max: 10,
+      routePrefix: `${API_V1_PUBLIC_PREFIX}/file`,
+      routePrefixBasedLimit: true,
+    },
+    {
+      windowMs: ms("1 minute"),
+      max: 2,
+      routePrefix: API_V1_PUBLIC_PREFIX,
+    },
+    {
+      windowMs: ms("1 minute"),
+      max: 100,
+      routePrefix: "/",
+    },
+  ])
 );
 
 export const routes = app

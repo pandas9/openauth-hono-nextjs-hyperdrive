@@ -3,6 +3,7 @@ import { getCookie, setCookie } from "hono/cookie";
 import { customLogger, getAuthClient, getKeyValue, setKeyValue } from "./utils";
 import { subjects } from "@openauthjs/openauth/subjects";
 import { RateLimitConfig } from "./validator";
+import { some, every } from "hono/combine";
 
 export const openAuth = async (c: Context, next: Next) => {
   const accessToken = getCookie(c, "access_token");
@@ -110,4 +111,8 @@ export const rateLimiter = (config: RateLimitConfig) => {
 
     await next();
   };
+};
+
+export const createRateLimiter = (configs: RateLimitConfig[]) => {
+  return some(...configs.map((config) => every(rateLimiter(config))));
 };
