@@ -6,7 +6,7 @@ import { PasswordAdapter } from '@openauthjs/openauth/adapter/password';
 import { PasswordUI } from '@openauthjs/openauth/ui/password';
 import { eq } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
-import { users } from '../db/schema';
+import { users } from 'server/schema';
 import { setTheme, Theme } from '@openauthjs/openauth/ui/theme';
 
 const customTheme: Theme = {
@@ -51,7 +51,7 @@ export default {
 				),
 			},
 			success: async (ctx, value) => {
-				const db = drizzle(env.OPENAUTH_HYPERDRIVE.connectionString);
+				const db = drizzle(env.HYPERDRIVE.connectionString);
 				let userID;
 
 				// Try to find existing user

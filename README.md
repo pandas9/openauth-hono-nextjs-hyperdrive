@@ -6,6 +6,7 @@
 pnpm i
 cd packages/openauth
 bun run build
+cd server
 pnpm migrate
 ```
 

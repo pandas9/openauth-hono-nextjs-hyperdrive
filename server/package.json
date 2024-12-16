@@ -3,16 +3,25 @@
   "scripts": {
     "dev": "wrangler dev --port 3001",
     "deploy": "wrangler deploy --minify",
-    "types": "wrangler types --env-interface CloudflareEnv env.d.ts"
+    "types": "wrangler types --env-interface CloudflareEnv env.d.ts",
+    "generate": "drizzle-kit generate",
+    "migrate": "drizzle-kit migrate"
   },
   "dependencies": {
     "@hono/zod-validator": "^0.4.2",
     "@openauthjs/openauth": "workspace:*",
     "hono": "^4.6.14",
-    "zod": "^3.24.1"
+    "zod": "^3.24.1",
+    "drizzle-orm": "^0.38.2"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241112.0",
-    "wrangler": "^3.88.0"
+    "wrangler": "^3.88.0",
+    "drizzle-kit": "^0.30.1"
+  },
+  "exports": {
+    "./validator": "./src/validator.ts",
+    "./schema": "./src/db/schema.ts",
+    "./helper": "./src/helper.ts"
   }
 }

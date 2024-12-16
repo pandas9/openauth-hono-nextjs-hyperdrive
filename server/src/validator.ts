@@ -1,5 +1,6 @@
 import { User } from "@openauthjs/openauth/subjects";
 import { z } from "zod";
+import userRoutes from "./v1/user";
 
 export type Variables = {
   user: User;
@@ -8,6 +9,8 @@ export type Variables = {
 export type Bindings = {
   AUTH_URL: string;
 };
+
+export type UserRouteType = typeof userRoutes;
 
 export const userSchema = z.object({
   name: z

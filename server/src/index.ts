@@ -33,4 +33,13 @@ app.get(`${API_PUBLIC_PREFIX}/hello`, (c) => {
   return c.json({ message: "world!" });
 });
 
+app.notFound((c) => {
+  return c.json({ message: "Not Found" }, 404);
+});
+
+app.onError((err, c) => {
+  console.error(`${err}`);
+  return c.json({ message: "Internal Server Error" }, 500);
+});
+
 export default app;

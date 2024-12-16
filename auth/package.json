@@ -7,11 +7,10 @@
 		"dev": "wrangler dev --port 3002",
 		"start": "wrangler dev",
 		"test": "vitest",
-		"cf-typegen": "wrangler types",
-		"generate": "drizzle-kit generate",
-		"migrate": "drizzle-kit migrate"
+		"types": "wrangler types"
 	},
 	"dependencies": {
+		"server": "workspace:*",
 		"@openauthjs/openauth": "workspace:*",
 		"drizzle-orm": "^0.38.2",
 		"postgres": "^3.4.5"
@@ -20,7 +19,6 @@
 		"@cloudflare/vitest-pool-workers": "^0.5.2",
 		"@cloudflare/workers-types": "^4.20241205.0",
 		"@types/node": "22.10.1",
-		"drizzle-kit": "^0.30.1",
 		"typescript": "^5.5.2",
 		"vitest": "2.1.8",
 		"wrangler": "^3.60.3"

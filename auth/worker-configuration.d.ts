@@ -2,5 +2,5 @@
 
 interface Env {
 	OPENAUTH_KV: KVNamespace;
-	OPENAUTH_HYPERDRIVE: Hyperdrive;
+	HYPERDRIVE: Hyperdrive;
 }
