@@ -41,16 +41,16 @@ app.use(
     // rate limit for private routes
     every(
       rateLimiter({
-        windowMs: 1 * 60 * 1000,
-        max: 10, // higher limit for authenticated users
+        windowMs: 1 * 60 * 1000, // 1 minute
+        max: 10,
         routePrefix: API_V1_PREFIX, // every route has a limit of 10 requests per minute but not request method
       })
     ),
     // rate limit for file routes
     every(
       rateLimiter({
-        windowMs: 1 * 60 * 1000, // 1 minute
-        max: 10, // limit each IP to 1000 requests per windowMs
+        windowMs: 1 * 60 * 1000,
+        max: 10,
         routePrefix: `${API_V1_PUBLIC_PREFIX}/file`,
         routePrefixBasedLimit: true,
       })
@@ -58,16 +58,16 @@ app.use(
     // every other public route
     every(
       rateLimiter({
-        windowMs: 1 * 60 * 1000, // 1 minute
-        max: 2, // limit each IP to 1000 requests per windowMs
+        windowMs: 1 * 60 * 1000,
+        max: 2,
         routePrefix: API_V1_PUBLIC_PREFIX,
       })
     ),
     // every other route
     every(
       rateLimiter({
-        windowMs: 1 * 60 * 1000, // 1 minute
-        max: 100, // limit each IP to 1000 requests per windowMs
+        windowMs: 1 * 60 * 1000,
+        max: 100,
         routePrefix: "/",
       })
     )
