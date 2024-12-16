@@ -1,6 +1,5 @@
 import { Next, Context } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
-import { env } from "hono/adapter";
 import { getClient } from "./utils";
 import { subjects } from "@openauthjs/openauth/subjects";
 
@@ -13,9 +12,7 @@ export const openAuth = async (c: Context, next: Next) => {
   }
 
   try {
-    const { AUTH_URL } = env(c);
-
-    const client = getClient(AUTH_URL);
+    const client = getClient(c.env.AUTH_URL);
 
     const verified = await client.verify(subjects, accessToken, {
       refresh: refreshToken,
@@ -29,7 +26,7 @@ export const openAuth = async (c: Context, next: Next) => {
       setCookie(c, "refresh_token", verified.tokens.refresh);
     }
 
-    c.set("user", verified.subject);
+    c.set("user", verified.subject.properties);
 
     await next();
   } catch (error) {

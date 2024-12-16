@@ -5,6 +5,10 @@ export type Variables = {
   user: User;
 };
 
+export type Bindings = {
+  AUTH_URL: string;
+};
+
 let cachedClient: ReturnType<typeof createClient> | null = null;
 
 export function getClient(issuer: string) {
