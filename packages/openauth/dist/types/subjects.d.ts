@@ -1,7 +1,7 @@
 import { InferInput } from "valibot";
 export declare const subjects: {
     user: import("valibot").ObjectSchema<{
-        readonly userID: import("valibot").OptionalSchema<import("valibot").NullableSchema<import("valibot").NumberSchema<undefined>, undefined>, undefined>;
+        readonly userID: import("valibot").NumberSchema<undefined>;
         readonly email: import("valibot").StringSchema<undefined>;
     }, undefined>;
 };

@@ -54,24 +54,28 @@ export default {
 				const db = drizzle(env.OPENAUTH_HYPERDRIVE.connectionString);
 				let userID;
 
+				// Try to find existing user
+				const existingUser = await db.select().from(users).where(eq(users.email, value.email)).limit(1);
+
+				if (existingUser.length === 0) {
+					// User doesn't exist, create new user
+					const [newUser] = await db
+						.insert(users)
+						.values({
+							email: value.email,
+						})
+						.returning({ id: users.id });
+
+					userID = newUser.id;
+				} else {
+					userID = existingUser[0].id;
+				}
+
+				if (!userID) {
+					throw new Error('User not found');
+				}
+
 				if (value.provider === 'password') {
-					// Try to find existing user
-					const existingUser = await db.select().from(users).where(eq(users.email, value.email)).limit(1);
-
-					if (existingUser.length === 0) {
-						// User doesn't exist, create new user
-						const [newUser] = await db
-							.insert(users)
-							.values({
-								email: value.email,
-							})
-							.returning({ id: users.id });
-
-						userID = newUser.id;
-					} else {
-						userID = existingUser[0].id;
-					}
-
 					return ctx.subject('user', {
 						userID,
 						email: value.email,
