@@ -4,6 +4,7 @@ import { type ExecutionContext } from '@cloudflare/workers-types';
 import { subjects } from '@openauthjs/openauth/subjects';
 import { PasswordAdapter } from '@openauthjs/openauth/adapter/password';
 import { PasswordUI } from '@openauthjs/openauth/ui/password';
+import { eq } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { users } from '../db/schema';
 import { setTheme, Theme } from '@openauthjs/openauth/ui/theme';
@@ -50,11 +51,26 @@ export default {
 			},
 			success: async (ctx, value) => {
 				const db = drizzle(env.OPENAUTH_HYPERDRIVE.connectionString);
-				console.log(await db.select().from(users));
-
 				let userID;
+
 				if (value.provider === 'password') {
-					userID = '123';
+					// Try to find existing user
+					const existingUser = await db.select().from(users).where(eq(users.email, value.email)).limit(1);
+
+					if (existingUser.length === 0) {
+						// User doesn't exist, create new user
+						const [newUser] = await db
+							.insert(users)
+							.values({
+								email: value.email,
+							})
+							.returning({ id: users.id });
+
+						userID = newUser.id;
+					} else {
+						userID = existingUser[0].id;
+					}
+
 					return ctx.subject('user', {
 						userID,
 						email: value.email,

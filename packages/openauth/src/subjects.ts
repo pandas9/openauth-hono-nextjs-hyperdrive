@@ -1,9 +1,9 @@
-import { object, string } from "valibot";
+import { nullable, number, object, optional, string } from "valibot";
 import { createSubjects } from "./session.js";
 
 export const subjects = createSubjects({
   user: object({
-    userID: string(),
+    userID: optional(nullable(number())),
     email: string(),
   }),
 });
