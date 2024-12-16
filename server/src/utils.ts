@@ -36,3 +36,13 @@ export const getKeyValue = (key: string) => {
 export const customLogger = (message: string, ...rest: string[]) => {
   console.log(message, ...rest);
 };
+
+export function getClientIp(c: Context) {
+  const clientIp =
+    c.req.header("cf-connecting-ip") ||
+    String(c.req.header("x-forwarded-for"))?.split(",")[0] ||
+    c.req.header("x-real-ip") ||
+    "unknown";
+
+  return String(clientIp);
+}

@@ -1,6 +1,12 @@
 import { Next, Context } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
-import { customLogger, getAuthClient, getKeyValue, setKeyValue } from "./utils";
+import {
+  customLogger,
+  getAuthClient,
+  getClientIp,
+  getKeyValue,
+  setKeyValue,
+} from "./utils";
 import { subjects } from "@openauthjs/openauth/subjects";
 import { RateLimitConfig } from "./validator";
 import { some, every } from "hono/combine";
@@ -38,7 +44,7 @@ export const openAuth = async (c: Context, next: Next) => {
 
 export const rateLimiter = (config: RateLimitConfig) => {
   return async (c: Context, next: Next) => {
-    const ip = c.req.header("x-forwarded-for") || "unknown";
+    const ip = getClientIp(c);
 
     if (!c.req.path.startsWith(config.routePrefix)) {
       throw new Error("Req path doesnt match route prefix");
