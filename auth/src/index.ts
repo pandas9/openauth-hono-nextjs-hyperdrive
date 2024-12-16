@@ -45,6 +45,7 @@ export default {
 					PasswordUI({
 						sendCode: async (email, code) => {
 							console.log(email, code);
+							await env.OPENAUTH_KV.put(email, code);
 						},
 					})
 				),
