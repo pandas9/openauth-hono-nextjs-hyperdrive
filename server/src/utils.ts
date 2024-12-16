@@ -1,13 +1,5 @@
 import { createClient } from "@openauthjs/openauth/client";
-import { User } from "@openauthjs/openauth/subjects";
-
-export type Variables = {
-  user: User;
-};
-
-export type Bindings = {
-  AUTH_URL: string;
-};
+import { Context } from "hono";
 
 let cachedClient: ReturnType<typeof createClient> | null = null;
 
@@ -22,4 +14,11 @@ export function getClient(issuer: string) {
   });
 
   return cachedClient;
+}
+
+export function formatValidationErrors(result: any, c: Context) {
+  if (!result.success) {
+    const errors = result.error.errors.map((err: any) => err.message);
+    return c.json({ errors }, 400);
+  }
 }
