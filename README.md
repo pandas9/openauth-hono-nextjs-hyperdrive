@@ -11,6 +11,7 @@
 - KV
 - Next.js
 - Cloudflare Pages
+- Rate limiting
 
 ## Setup
 

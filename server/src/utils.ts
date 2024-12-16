@@ -5,7 +5,7 @@ import { Env } from "./validator";
 
 let cachedClient: ReturnType<typeof createClient> | null = null;
 
-export function getClient(issuer: string) {
+export function getAuthClient(issuer: string) {
   if (cachedClient) {
     return cachedClient;
   }

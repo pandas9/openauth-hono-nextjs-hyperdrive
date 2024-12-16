@@ -1,6 +1,6 @@
 import { Next, Context } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
-import { getClient, getKeyValue, setKeyValue } from "./utils";
+import { getAuthClient, getKeyValue, setKeyValue } from "./utils";
 import { subjects } from "@openauthjs/openauth/subjects";
 import { RateLimitConfig } from "./validator";
 
@@ -13,7 +13,7 @@ export const openAuth = async (c: Context, next: Next) => {
   }
 
   try {
-    const client = getClient(c.env.AUTH_URL);
+    const client = getAuthClient(c.env.AUTH_URL);
 
     const verified = await client.verify(subjects, accessToken, {
       refresh: refreshToken,
