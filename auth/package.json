@@ -4,7 +4,7 @@
 	"private": true,
 	"scripts": {
 		"deploy": "npx wrangler deploy",
-		"dev": "wrangler dev --port 3002",
+		"dev": "wrangler dev --port 3002 --inspector-port 9230",
 		"start": "wrangler dev",
 		"test": "vitest",
 		"types": "wrangler types"

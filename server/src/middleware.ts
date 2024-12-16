@@ -1,7 +1,8 @@
 import { Next, Context } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
-import { getClient } from "./utils";
+import { getClient, getKeyValue, setKeyValue } from "./utils";
 import { subjects } from "@openauthjs/openauth/subjects";
+import { RateLimitConfig } from "./validator";
 
 export const openAuth = async (c: Context, next: Next) => {
   const accessToken = getCookie(c, "access_token");
@@ -32,4 +33,64 @@ export const openAuth = async (c: Context, next: Next) => {
   } catch (error) {
     return c.json({ error: "Unauthorized" }, 401);
   }
+};
+
+export const rateLimiter = (config: RateLimitConfig) => {
+  return async (c: Context, next: Next) => {
+    const ip = c.req.header("x-forwarded-for") || "unknown";
+    const key = `ratelimit:${ip}`;
+
+    const now = Date.now();
+
+    // Get existing record
+    const record = await getKeyValue(key);
+    const currentRecord = record
+      ? JSON.parse(record)
+      : {
+          count: 0,
+          resetTime: now + config.windowMs,
+        };
+
+    // Reset if window has expired
+    if (now > currentRecord.resetTime) {
+      currentRecord.count = 0;
+      currentRecord.resetTime = now + config.windowMs;
+    }
+
+    // Increment count
+    currentRecord.count += 1;
+
+    // Store updated record
+    await setKeyValue(key, JSON.stringify(currentRecord));
+
+    // Check if over limit
+    if (currentRecord.count > config.max) {
+      const retryAfterSeconds = Math.ceil(
+        (currentRecord.resetTime - now) / 1000
+      );
+      const retryAfterMinutes = Math.ceil(retryAfterSeconds / 60);
+      return c.json(
+        {
+          error: `Too many requests. Please try again in ${retryAfterMinutes} minute${
+            retryAfterMinutes === 1 ? "" : "s"
+          }`,
+          retryAfter: retryAfterSeconds,
+        },
+        429
+      );
+    }
+
+    // Add rate limit info to headers
+    c.header("X-RateLimit-Limit", config.max.toString());
+    c.header(
+      "X-RateLimit-Remaining",
+      (config.max - currentRecord.count).toString()
+    );
+    c.header(
+      "X-RateLimit-Reset",
+      Math.ceil(currentRecord.resetTime / 1000).toString()
+    );
+
+    await next();
+  };
 };

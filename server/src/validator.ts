@@ -31,3 +31,8 @@ export const userSchema = z.object({
     })
     .min(1, "Age cannot be empty"),
 });
+
+export interface RateLimitConfig {
+  windowMs: number; // Time window in milliseconds
+  max: number; // Max number of requests within the window
+}

@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { openAuth } from "./middleware";
+import { openAuth, rateLimiter } from "./middleware";
 import { cors } from "hono/cors";
 import { env } from "hono/adapter";
 import { API_V1_PUBLIC_PREFIX, API_V1_PREFIX } from "./helper";
@@ -9,6 +9,7 @@ import { logger } from "hono/logger";
 import { Env } from "./validator";
 import { contextStorage } from "hono/context-storage";
 import { customLogger } from "./utils";
+import { every } from "hono/combine";
 
 const app = new Hono<Env>();
 
@@ -27,7 +28,27 @@ app.use("*", async (c, next) => {
   return corsMiddlewareHandler(c, next);
 });
 
-app.use(`${API_V1_PREFIX}/*`, openAuth);
+app.use(
+  `${API_V1_PUBLIC_PREFIX}/*`,
+  rateLimiter({
+    windowMs: 1 * 60 * 1000, // 1 minute
+    max: 2, // limit each IP to 100 requests per windowMs
+  })
+);
+
+// this can also be specific to routes
+// /user/*
+// ...
+app.use(
+  `${API_V1_PREFIX}/*`,
+  every(
+    openAuth,
+    rateLimiter({
+      windowMs: 1 * 60 * 1000,
+      max: 10, // higher limit for authenticated users
+    })
+  )
+);
 
 export const routes = app
   .route(`${API_V1_PREFIX}/user`, userRoutes)
