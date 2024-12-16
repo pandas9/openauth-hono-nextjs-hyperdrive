@@ -1,6 +1,6 @@
 import { Next, Context } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
-import { getAuthClient, getKeyValue, setKeyValue } from "./utils";
+import { customLogger, getAuthClient, getKeyValue, setKeyValue } from "./utils";
 import { subjects } from "@openauthjs/openauth/subjects";
 import { RateLimitConfig } from "./validator";
 
@@ -38,7 +38,24 @@ export const openAuth = async (c: Context, next: Next) => {
 export const rateLimiter = (config: RateLimitConfig) => {
   return async (c: Context, next: Next) => {
     const ip = c.req.header("x-forwarded-for") || "unknown";
-    const key = `ratelimit:${ip}`;
+
+    if (!c.req.path.startsWith(config.routePrefix)) {
+      throw new Error("Req path doesnt match route prefix");
+    }
+    // Use provided route prefix or fall back to full path
+    const key = `ratelimit:${ip}:${
+      config.routePrefixBasedLimit ? config.routePrefix : c.req.path
+    }`;
+
+    /*
+    // if user is premium, then increase the limit
+    // this is just an example, you can do anything here
+    // you can also check c.req.path or config.routePrefix
+    const user = c.get("user");
+    if (user && user.tier === "premium") {
+      config.max = 1000;
+    }
+    */
 
     const now = Date.now();
 

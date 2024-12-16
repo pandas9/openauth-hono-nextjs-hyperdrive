@@ -5,11 +5,12 @@ import { env } from "hono/adapter";
 import { API_V1_PUBLIC_PREFIX, API_V1_PREFIX } from "./helper";
 import userRoutes from "./v1/user";
 import publicRoutes from "./v1/public";
+import uploadRoutes from "./v1/upload";
 import { logger } from "hono/logger";
 import { Env } from "./validator";
 import { contextStorage } from "hono/context-storage";
 import { customLogger } from "./utils";
-import { every } from "hono/combine";
+import { every, some } from "hono/combine";
 
 const app = new Hono<Env>();
 
@@ -28,30 +29,54 @@ app.use("*", async (c, next) => {
   return corsMiddlewareHandler(c, next);
 });
 
-app.use(
-  `${API_V1_PUBLIC_PREFIX}/*`,
-  rateLimiter({
-    windowMs: 1 * 60 * 1000, // 1 minute
-    max: 2, // limit each IP to 100 requests per windowMs
-  })
-);
+// protected routes
+app.use(`${API_V1_PREFIX}/*`, openAuth);
 
-// this can also be specific to routes
-// /user/*
-// ...
+// rate limit for all routes
+// if route prefix is not matched, then rate limiter will throw an error
+// that is handled by every function
 app.use(
-  `${API_V1_PREFIX}/*`,
-  every(
-    openAuth,
-    rateLimiter({
-      windowMs: 1 * 60 * 1000,
-      max: 10, // higher limit for authenticated users
-    })
+  "*",
+  some(
+    // rate limit for private routes
+    every(
+      rateLimiter({
+        windowMs: 1 * 60 * 1000,
+        max: 10, // higher limit for authenticated users
+        routePrefix: API_V1_PREFIX, // every route has a limit of 10 requests per minute but not request method
+      })
+    ),
+    // rate limit for file routes
+    every(
+      rateLimiter({
+        windowMs: 1 * 60 * 1000, // 1 minute
+        max: 10, // limit each IP to 1000 requests per windowMs
+        routePrefix: `${API_V1_PUBLIC_PREFIX}/file`,
+        routePrefixBasedLimit: true,
+      })
+    ),
+    // every other public route
+    every(
+      rateLimiter({
+        windowMs: 1 * 60 * 1000, // 1 minute
+        max: 2, // limit each IP to 1000 requests per windowMs
+        routePrefix: API_V1_PUBLIC_PREFIX,
+      })
+    ),
+    // every other route
+    every(
+      rateLimiter({
+        windowMs: 1 * 60 * 1000, // 1 minute
+        max: 100, // limit each IP to 1000 requests per windowMs
+        routePrefix: "/",
+      })
+    )
   )
 );
 
 export const routes = app
   .route(`${API_V1_PREFIX}/user`, userRoutes)
+  .route(`${API_V1_PREFIX}/upload`, uploadRoutes)
   .route(API_V1_PUBLIC_PREFIX, publicRoutes);
 
 app.notFound((c) => {

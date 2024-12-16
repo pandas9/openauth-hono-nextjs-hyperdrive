@@ -12,6 +12,7 @@
 - Next.js
 - Cloudflare Pages
 - Rate limiting
+- R2 file upload
 
 ## Setup
 
@@ -28,6 +29,10 @@ pnpm migrate
 ```bash
 pnpm -r --parallel dev
 ```
+
+## Recommended
+
+- Use trigger.dev for more complex tasks such as video processing it's also great for queues https://trigger.dev/docs/queue-concurrency
 
 ## Why Cloudflare?
 

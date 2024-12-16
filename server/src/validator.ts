@@ -10,6 +10,7 @@ export type Bindings = {
   AUTH_URL: string;
   KV: KVNamespace;
   HYPERDRIVE: Hyperdrive;
+  BUCKET: R2Bucket;
 };
 
 export type Env = {
@@ -35,4 +36,6 @@ export const userSchema = z.object({
 export interface RateLimitConfig {
   windowMs: number; // Time window in milliseconds
   max: number; // Max number of requests within the window
+  routePrefix: string;
+  routePrefixBasedLimit?: boolean; // if true, rate limit key is based on the route prefix
 }

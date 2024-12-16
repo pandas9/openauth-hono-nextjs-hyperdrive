@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 import { Env } from "../../validator";
-import test from "./test";
-import test2 from "./test2";
+import system from "./system";
+import upload from "./upload";
 
-const publicRoutes = new Hono<Env>().route("/", test).route("/", test2);
+const publicRoutes = new Hono<Env>().route("/", system).route("/", upload);
 
 export default publicRoutes;
