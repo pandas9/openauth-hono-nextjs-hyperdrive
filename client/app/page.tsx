@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { auth, login, logout } from "./actions";
 import styles from "./page.module.css";
+import TestApi from "@/components/test-api";
 
 export const runtime = "edge";
 
@@ -48,6 +49,7 @@ export default async function Home() {
               <button className={styles.primary}>Login with OpenAuth</button>
             </form>
           )}
+          <TestApi />
         </div>
       </main>
       <footer className={styles.footer}>

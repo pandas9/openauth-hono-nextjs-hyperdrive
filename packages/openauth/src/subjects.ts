@@ -1,4 +1,11 @@
-import { nullable, number, object, optional, string } from "valibot";
+import {
+  InferInput,
+  nullable,
+  number,
+  object,
+  optional,
+  string,
+} from "valibot";
 import { createSubjects } from "./session.js";
 
 export const subjects = createSubjects({
@@ -7,3 +14,5 @@ export const subjects = createSubjects({
     email: string(),
   }),
 });
+
+export type User = InferInput<typeof subjects.user>;

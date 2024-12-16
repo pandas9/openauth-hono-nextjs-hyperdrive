@@ -10,7 +10,7 @@
     "pages:build": "pnpm next-on-pages",
     "preview": "pnpm pages:build && wrangler pages dev",
     "deploy": "pnpm pages:build && npx wrangler pages deploy",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv env.d.ts"
+    "types": "wrangler types --env-interface CloudflareEnv env.d.ts"
   },
   "dependencies": {
     "@openauthjs/openauth": "workspace:*",

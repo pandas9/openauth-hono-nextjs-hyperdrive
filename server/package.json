@@ -2,7 +2,8 @@
   "name": "server",
   "scripts": {
     "dev": "wrangler dev --port 3001",
-    "deploy": "wrangler deploy --minify"
+    "deploy": "wrangler deploy --minify",
+    "types": "wrangler types --env-interface CloudflareEnv env.d.ts"
   },
   "dependencies": {
     "@openauthjs/openauth": "workspace:*",
