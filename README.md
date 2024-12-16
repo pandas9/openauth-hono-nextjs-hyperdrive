@@ -1,5 +1,17 @@
 # Boilerplate for OpenAuth, Next.js, Hono, Hyperdrive, KV and Cloudflare Pages
 
+## What's included?
+
+- Monorepo
+- RPC, share API specifications between the server and the client
+- Drizzle ORM
+- OpenAuth
+- Hono
+- Hyperdrive
+- KV
+- Next.js
+- Cloudflare Pages
+
 ## Setup
 
 ```bash
