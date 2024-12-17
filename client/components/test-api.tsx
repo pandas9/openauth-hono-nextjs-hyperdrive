@@ -3,8 +3,16 @@
 import { useState } from "react";
 import styles from "../app/page.module.css";
 import { serverApi } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
 
 export default function TestApi() {
+  const { data: systemHealth, isLoading: systemHealthLoading } = useQuery({
+    queryKey: ["system-health"],
+    queryFn: async () =>
+      (await serverApi.public.v1.system.health.$get()).json(),
+  });
+  console.log(systemHealth, systemHealthLoading);
+
   const [uploadedFileName, setUploadedFileName] = useState<string>("");
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
