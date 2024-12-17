@@ -7,8 +7,16 @@ import {
   getKeyValue,
   customLogger,
 } from "../utils";
+import { rateLimiter } from "../middleware";
+import ms from "ms";
 
 const app = new Hono<Env>()
+  .use(
+    rateLimiter({
+      windowMs: ms("1 minute"),
+      max: 5,
+    })
+  )
   .get("/", (c) => c.json({ message: "get user", user: c.get("user") }))
 
   .post("/", zValidator("json", userSchema, formatValidationErrors), (c) => {

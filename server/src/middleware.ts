@@ -46,9 +46,6 @@ export const rateLimiter = (config: RateLimitConfig) => {
   return async (c: Context, next: Next) => {
     const ip = getClientIp(c);
 
-    if (!c.req.path.startsWith(config.routePrefix)) {
-      throw new Error("Req path doesnt match route prefix");
-    }
     // Use provided route prefix or fall back to full path
     const key = `ratelimit:${ip}:${
       config.routePrefixBasedLimit ? config.routePrefix : c.req.path
@@ -74,6 +71,7 @@ export const rateLimiter = (config: RateLimitConfig) => {
           count: 0,
           resetTime: now + config.windowMs,
         };
+    //customLogger("currentRecord", JSON.stringify(currentRecord, null, 2));
 
     // Reset if window has expired
     if (now > currentRecord.resetTime) {
@@ -86,6 +84,7 @@ export const rateLimiter = (config: RateLimitConfig) => {
 
     // Store updated record
     await setKeyValue(key, JSON.stringify(currentRecord));
+    //customLogger("newRecord", JSON.stringify(currentRecord, null, 2));
 
     // Check if over limit
     if (currentRecord.count > config.max) {
@@ -117,8 +116,4 @@ export const rateLimiter = (config: RateLimitConfig) => {
 
     await next();
   };
-};
-
-export const createRateLimiter = (configs: RateLimitConfig[]) => {
-  return some(...configs.map((config) => every(rateLimiter(config))));
 };

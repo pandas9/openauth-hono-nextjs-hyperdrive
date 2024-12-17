@@ -29,7 +29,7 @@ export default function TestApi() {
 
       // Get the uploaded file
       window.open(
-        `${serverApi.public.v1.file[":key"].$url({
+        `${serverApi.public.v1.files.file[":key"].$url({
           param: {
             key: file.name,
           },
@@ -46,7 +46,7 @@ export default function TestApi() {
       <button
         className={styles.primary}
         onClick={async () => {
-          const response = await serverApi.public.v1.health.$get();
+          const response = await serverApi.public.v1.system.health.$get();
           const data = await response.json();
           console.log(data);
         }}

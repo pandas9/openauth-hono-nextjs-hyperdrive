@@ -36,6 +36,6 @@ export const userSchema = z.object({
 export interface RateLimitConfig {
   windowMs: number; // Time window in milliseconds
   max: number; // Max number of requests within the window
-  routePrefix: string;
+  routePrefix?: string;
   routePrefixBasedLimit?: boolean; // if true, rate limit key is based on the route prefix
 }
